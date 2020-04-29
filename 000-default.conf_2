@@ -1,0 +1,71 @@
+#located /etc/apache2/sites-enabled/000-default.conf
+#SSL CONF
+#TESTED For 80 redir to 443 with ssl working conf
+<VirtualHost *:80>
+     ServerName ReplaceServerName
+     #Redirect permanent / %https://ReDirIPorDomain%
+        #<Directory /var/www/html>
+                #Options -Includes -ExecCGI -MultiViews
+                #AllowOverride All
+                #Order allow,deny
+		 #allow from all
+     		#<LimitExcept GET POST>
+		#deny from all
+		#</LimitExcept>		
+      #  </Directory>
+#
+ #       ServerAdmin webmaster@localhost
+  #      DocumentRoot /var/www/html
+        #LogLevel rewrite trace6
+#        ErrorLog ${APACHE_LOG_DIR}/error.log
+ #       CustomLog ${APACHE_LOG_DIR}/access.log combined
+ 
+	#<Files "ReplaceFIlePath">
+        #Require method POST
+        #</Files>
+</VirtualHost>
+
+
+#RUN 'a2enmod ssl'
+#RUN sudo hostnamectl set-hostname {DOMAIN} (if needed)
+# Setup global fqdn apache  'sudo echo "ServerName {Server hostname}" | sudo tee /etc/apache2/conf-available/fqdn.conf '
+#Check config syntax 'apache2ctl configtest'
+<VirtualHost *:443>
+     ServerName ReplaceServerName
+     #Redirect permanent / %https://ReDirIPorDomain%
+	# Enable SSL
+	SSLEngine On
+	
+	# Enable SSL Proxy
+	SSLProxyEngine On
+	
+	# Trust Self-Signed Certificates generated
+	SSLProxyVerify none
+	SSLProxyCheckPeerCN off
+	SSLProxyCheckPeerName off
+	SSLProxyCheckPeerExpire off
+	
+	SSLCertificateFile %Path_crt%
+        SSLCertificateKeyFile %PATH_key%
+        SSLCertificateChainFile %PATH_ca-bundle%
+	
+     <Directory /var/www/html>
+        Options -Includes -ExecCGI -MultiViews
+        AllowOverride All
+        Order allow,deny
+	allow from all
+        <LimitExcept GET POST>
+	deny from all
+	</LimitExcept>
+     </Directory>
+
+       ServerAdmin webmaster@localhost
+       DocumentRoot /var/www/html
+        #LogLevel rewrite trace6
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+	
+	#<Files "ReplaceFIlePath">
+        #Require method POST
+        #</Files>
+  </VirtualHost>
